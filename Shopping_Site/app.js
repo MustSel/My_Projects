@@ -1,175 +1,171 @@
+import { getCategories } from "./src/getCategories";
+import { addBasket, urunBas } from "./src/urunleriBas";
+import Swal from "sweetalert2";
+
+// DOM Elements
 const btnDivs = document.getElementById("btns");
 const productDivs = document.getElementById("products");
 const searchInput = document.getElementById("searchInput");
 const categoryTitle = document.getElementById("category");
-const modalBody = document.querySelector(".modal-body")
+const modalBody = document.querySelector(".modal-body");
+const modalTitle = document.querySelector(".modal-title");
+const body = document.querySelector("body");
+const basketCount = document.querySelector("#sepet");
+const clearBasket = document.getElementById("clear-basket");
 
-const btnColors = [
-  "primary",
-  "secondary",
-  "success",
-  "info",
-  "warning",
-  "danger",
-  "light",
-  "dark",
-];
+// Data
+let data = [];
+let filtered = [];
+let basket = [];
 
-let products = [];
-let baskets = [];
-
-const getProducts = async () => {
-  const res = await fetch("https://anthonyfs.pythonanywhere.com/api/products/");
-  const data = await res.json();
-  console.log(data);
-  products = data;
-  category();
-  displayProducts(products);
-};
-getProducts();
-
-const category = () => {
-  console.log(products);
-  // const categoryArr = products.map(item=> item.category);
-  // console.log(categoryArr)
-  //+ 1.yol
-  // let categoryArr = ["all"]
-  // products.forEach(item=>{
-  //     if(!categoryArr.includes(item.category)){
-  //         categoryArr.push(item.category)
-  //     }
-  // })
-  // console.log(categoryArr)
-  //! 2.yol
-  // const categoryArr = products.reduce((acc,item)=>{
-  //     if(!acc.includes(item.category)){
-  //         acc.push(item.category)
-  //     }
-  //     return acc
-  // },["all"])
-  // console.log(categoryArr)
-  //?3.yol
-  const categoryArr = [
-    "all",
-    ...new Set(products.map((item) => item.category)),
-  ];
-  console.log(categoryArr);
-
-  categoryArr.forEach((category, i) => {
-    const btn = document.createElement("button");
-    btn.innerText = category.toUpperCase();
-    btn.classList.add("btn", `btn-${btnColors[i]}`);
-    btnDivs.appendChild(btn);
-  });
+// Fetch Products
+const fetchProducts = async () => {
+  try {
+    const res = await fetch("https://anthonyfs.pythonanywhere.com/api/products/");
+    if (!res.ok) throw new Error(`${res.status}`);
+    data = await res.json();
+    urunBas(data);
+    getCategories(data);
+    basket = JSON.parse(localStorage.getItem("basket")) || [];
+    addBasket(basket);
+    updateBasketCount();
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-function displayProducts(arr) {
-  productDivs.innerHTML = "";
-  arr.forEach((item) => {
-    const { id, title, description, price, image } = item;
-    const productDiv = document.createElement("div");
-    productDiv.classList.add("col");
-    productDiv.setAttribute("id", id);
-    productDiv.innerHTML = `
-        <div class="card">
-            <img src="${image}" class="p-2" height="250px" alt="...">
-            <div class="card-body">
-      <h5 class="card-title">${title}</h5>
-              <p class="card-text line-clamp-2">${description}</p>
-            </div>
-            <div class="card-footer w-100 fw-bold d-flex justify-content-between gap-3">
-            <span>Price:</span><span>${price} $</span>
-                
-            </div>
-            <div class="card-footer w-100 d-flex justify-content-center gap-3">
-                <button class="btn btn-danger">
-                Sepete Ekle
-                </button>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                See Details
-                </button>
-            </div>
-          </div>
-        `;
-    productDiv.addEventListener("click", (e) => {
-      if (e.target.classList.contains("btn-danger")) {
-        addToCart(item);
-      }else if (e.target.classList.contains("btn-primary")){
-        showModal(item)
+// Initial load
+document.addEventListener("DOMContentLoaded", fetchProducts);
+
+// Event Listeners
+btnDivs.addEventListener("click", handleCategoryFilter);
+searchInput.addEventListener("input", handleSearch);
+body.addEventListener("click", handleProductActions);
+canvas.addEventListener("click", handleBasketActions);
+clearBasket.addEventListener("click", handleClearBasket);
+
+// Functions
+function handleCategoryFilter(e) {
+  searchInput.value = "";
+  searchInput.focus();
+  const category = e.target.textContent;
+  categoryTitle.textContent = category;
+  filtered = category === "ALL" ? data : data.filter(item => item.category === category);
+  urunBas(filtered);
+}
+
+function handleSearch(e) {
+  const searchTerm = e.target.value.toLowerCase();
+  const filteredData = filtered.length ? filtered : data;
+  const results = filteredData.filter(item => item.title.toLowerCase().includes(searchTerm));
+  urunBas(results);
+}
+
+function handleProductActions(e) {
+  const productId = e.target.id;
+  const product = data.find(item => item.id == productId);
+  if (e.target.classList.contains("add-basket")) {
+    addToBasket(product);
+  }
+  if (e.target.classList.contains("see-details")) {
+    displayProductDetails(product);
+  }
+}
+
+function handleBasketActions(e) {
+  const productId = e.target.id;
+  const product = basket.find(item => item.id == productId);
+  if (e.target.classList.contains("remove")) {
+    removeFromBasket(product);
+  }
+  if (e.target.classList.contains("fa-minus")) {
+    decreaseQuantity(product);
+  }
+  if (e.target.classList.contains("fa-plus")) {
+    increaseQuantity(product);
+  }
+}
+
+function handleClearBasket() {
+  basket = [];
+  localStorage.removeItem("basket");
+  addBasket(basket);
+  updateBasketCount();
+}
+
+function addToBasket(product) {
+  if (!basket.includes(product)) {
+    basket.push(product);
+  } else {
+    basket.forEach(item => {
+      if (item.id == product.id) {
+        ++item.quantity;
       }
     });
-    productDivs.appendChild(productDiv);
+  }
+  addBasket(basket);
+  updateBasketCount();
+  localStorage.setItem("basket", JSON.stringify(basket));
+  addedBasketPopup();
+}
+
+function removeFromBasket(product) {
+  Swal.fire({
+    icon: "success",
+    title: "Removed from Basket",
   });
+  basket = basket.filter(item => item !== product);
+  product.quantity = 1;
+  addBasket(basket);
+  updateBasketCount();
+  localStorage.setItem("basket", JSON.stringify(basket));
 }
-function addToCart(product) {
-  console.log(product);
-  if (baskets.some((item) => item.title === product.title)) {
-    baskets = baskets.map((item) => {
-      return item.id === product.id
-        ? { ...item, quantity: item.quantity + 1 }
-        : item;
-    });
-  } else {
-    baskets.push(product);
+
+function decreaseQuantity(product) {
+  if (product.quantity > 1) {
+    --product.quantity;
+    addBasket(basket);
+    updateBasketCount();
+    localStorage.setItem("basket", JSON.stringify(basket));
   }
-  console.log(baskets);
 }
 
-function showModal(product){
-      fetch(`https://anthonyfs.pythonanywhere.com/api/products/${product.id}`)
-      .then((res) => res.json())
-      .then((res) => {
-        modalBody.innerHTML = `<div class="text-center">
-              <img src="${res.image}" class="p-2" height="250px" alt="...">
-              <h5 class="card-title">${res.title}</h5>
-              <p class="card-text">${res.description}</p>
-              <p class="card-text">Fiyat: ${res.price} $</p>
-              </div>
-              `;
-      });
-    // const {image,title,description,price} = product
-    // modalBody.innerHTML = `<div class="text-center">
-    // <img src="${image}" class="p-2" height="250px" alt="...">
-    // <h5 class="card-title">${title}</h5>
-    // <p class="card-text">${description}</p>
-    // <p class="card-text">Fiyat: ${price} $</p>
-    // </div>
-    // `;
+function increaseQuantity(product) {
+  ++product.quantity;
+  addBasket(basket);
+  updateBasketCount();
+  localStorage.setItem("basket", JSON.stringify(basket));
 }
 
-btnDivs.addEventListener("click", (e) => {
-  if (e.target.classList.contains("btn")) {
-    const selectedCategory = e.target.innerText.toLowerCase();
-    categoryTitle.innerText = selectedCategory.toUpperCase();
-    const value = searchInput.value;
-    // const filteredProducts =
-    //   selectedCategory === "all"
-    //     ? products
-    //     : products.filter(
-    //         (item) =>
-    //           item.category.toLowerCase() === selectedCategory &&
-    //           item.title.toLowerCase().includes(value.toLowerCase())
-    //       );
-    const filteredProducts = filtered(selectedCategory,value)
-    displayProducts(filteredProducts);
-  }
-});
+function displayProductDetails(product) {
+  const { title, description, price, image, id } = product;
+  modalTitle.innerHTML = `${title}`;
+  modalBody.innerHTML = `<div class="text-center">
+    <img src="${image}" class="p-2" height="250px" alt="...">
+    <h5 class="card-title">${title}</h5>
+    <p class="card-text">${description}</p>
+    <p class="card-text">Price: ${price} $</p>
+    <button id="${id}" class="btn add-basket btn-danger">Add to Basket</button>
+  </div>`;
+}
 
-searchInput.addEventListener("input",(e)=>{
-    const value = e.target.value.toLowerCase()
-    const selectedCategory = categoryTitle.innerText.toLowerCase()
-    const filteredProducts = filtered(selectedCategory,value)
-    displayProducts(filteredProducts)
+function updateBasketCount() {
+  const count = basket.reduce((acc, item) => acc + item.quantity, 0);
+  basketCount.textContent = count;
+}
 
-})
-
-function filtered(selectedCategory,value){
-    const newArr = selectedCategory === "all"
-    ? products
-    : products.filter(
-        (item) =>
-          item.category.toLowerCase() === selectedCategory &&
-          item.title.toLowerCase().includes(value.toLowerCase())
-      );
-   return newArr   
+function addedBasketPopup() {
+  Swal.fire({
+    icon: "success",
+    title: "Added to Basket",
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 2000,
+    timerProgressBar: true,
+    didOpen: toast => {
+      toast.onmouseenter = Swal.stopTimer;
+      toast.onmouseleave = Swal.resumeTimer;
+    },
+  });
 }

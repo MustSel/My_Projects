@@ -2,12 +2,12 @@ import { productDivs } from "../main";
 import { canvas } from "../main";
 
 const tot = document.getElementById("tot");
-export const urunBas = (item)=> {
-    productDivs.innerHTML =""
-    item.forEach(element => {
-        const{title, description, price, image, id} = element
-        
-        productDivs.innerHTML += `
+export const urunBas = (item) => {
+  productDivs.innerHTML = "";
+  item.forEach((element) => {
+    const { title, description, price, image, id } = element;
+
+    productDivs.innerHTML += `
         <div class="col">
           <div class="card">
             <img
@@ -26,9 +26,9 @@ export const urunBas = (item)=> {
               <span>Price:</span><span>${price} $</span>
             </div>
             <div class="card-footer w-100 d-flex justify-content-center gap-3">
-              <button id="${id}" class="btn btn-danger">Sepete Ekle</button>
+              <button id="${id}" class="btn add-basket btn-danger">Sepete Ekle</button>
               <button id="${id}"
-                class="btn btn-primary"
+                class="btn see-details btn-primary"
                 data-bs-toggle="modal"
                 data-bs-target="#exampleModal"
               >
@@ -37,26 +37,18 @@ export const urunBas = (item)=> {
             </div>
           </div>
         </div>
-        `
+        `;
+  });
+};
 
-        
-    });
+export const addBasket = (item) => {
+  if (item.length > 0) {
+    canvas.innerHTML = "";
 
-
-
-
-}
-
-export const addBasket = (item) =>{
-
-canvas.innerHTML=""
-
-
-item.forEach(element => {
-  
-  const{title, price, image, id, quantity} = element
-  let total = (price*quantity).toFixed(2);
-canvas.innerHTML += `
+    item.forEach((element) => {
+      const { title, price, image, id, quantity } = element;
+      let total = (price * quantity).toFixed(2);
+      canvas.innerHTML += `
   <div class="card mb-3" style="max-width: 540px">
           <div class="row g-0">
             <div class="col-md-4 my-auto">
@@ -79,26 +71,33 @@ canvas.innerHTML += `
                   ></i>
                 </div>
                 <p class="card-text">${price}$ x ${quantity} : <span id="total">${total}</span>$</p>
-                <button id="${id}" class="btn btn-danger">Remove</button>
+                <button id="${id}" class="btn remove btn-dark">Remove</button>
               </div>
             </div>
           </div>
         </div>
-`
-});
-sum()
-}
-
-const sum = ()=>{
-
-  let sumTot = document.querySelectorAll("#total")
-  let summ = 0
-  if(sumTot.length>0){
-  sumTot.forEach((item)=>{
-    summ+=Number(item.textContent)
-    tot.textContent=`${summ.toFixed(2)} $`
-  })
-  } else{
-    tot.textContent="00.0 $"
+`;
+    });
+    sum();
+  } else {
+    canvas.innerHTML = `
+  <div class="card mb-3" style="max-width: 350px">
+  <h4 class="text-center">Sepetiniz Boş Görünüyor:(</h4><br>
+  <img src="./assets/empt-image.svg" alt="">
+</div>`;
+    sum();
   }
-}
+};
+
+const sum = () => {
+  let sumTot = document.querySelectorAll("#total");
+  let summ = 0;
+  if (sumTot.length > 0) {
+    sumTot.forEach((item) => {
+      summ += Number(item.textContent);
+      tot.textContent = `${summ.toFixed(2)} $`;
+    });
+  } else {
+    tot.textContent = "00.0 $";
+  }
+};
