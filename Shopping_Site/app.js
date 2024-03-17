@@ -50,7 +50,7 @@ function handleCategoryFilter(e) {
   searchInput.focus();
   const category = e.target.textContent;
   categoryTitle.textContent = category;
-  filtered = category === "ALL" ? data : data.filter(item => item.category === category);
+  filtered = (category === "ALL") ? data : data.filter(item => item.category === category);
   urunBas(filtered);
 }
 

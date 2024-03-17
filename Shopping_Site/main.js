@@ -39,36 +39,22 @@ const urunGetir = async () => {
 document.addEventListener("DOMContentLoaded", urunGetir);
 
 btnDivs.addEventListener("click", (e) => {
-  searchInput.value = "";
-  searchInput.focus();
+  
   if (e.target.classList.contains("btn")) {
+    searchInput.value = "";
+  searchInput.focus();
     const category = e.target.textContent;
   categoryTitle.textContent = category;
-  filtered = category === "ALL" ? data : data.filter(item => item.category === category);
+  filtered = (category === "ALL") ? data : data.filter(item => item.category === category);
   urunBas(filtered);
   }
 });
 
 searchInput.addEventListener("input", (e) => {
-  if (categoryTitle.textContent === "ALL") {
-    productDivs.innerHTML = "";
-    e.target.value
-      ? urunBas(
-          data.filter((item) =>
-            item.title.toLowerCase().includes(e.target.value.toLowerCase())
-          )
-        )
-      : urunBas(data);
-  } else {
-    productDivs.innerHTML = "";
-    e.target.value
-      ? urunBas(
-          filtered.filter((item) =>
-            item.title.toLowerCase().includes(e.target.value.toLowerCase())
-          )
-        )
-      : urunBas(filtered);
-  }
+  const searchTerm = e.target.value.toLowerCase();
+  const filteredData = filtered.length ? filtered : data;
+  const results = filteredData.filter(item => item.title.toLowerCase().includes(searchTerm));
+  urunBas(results);
 });
 
 body.addEventListener("click", (e) => {
