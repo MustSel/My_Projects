@@ -128,3 +128,4 @@ if(e.target.classList.contains("fa-plus")){
 addBasket(basket)
 })
 
+let x = 5
