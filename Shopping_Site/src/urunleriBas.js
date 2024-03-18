@@ -9,7 +9,7 @@ export const urunBas = (item) => {
 
     productDivs.innerHTML += `
         <div class="col">
-          <div class="card">
+          <div class="card pro-card">
             <img
               src="${image}"
               class="p-2"

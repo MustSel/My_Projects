@@ -6,12 +6,12 @@ export const btnDivs = document.getElementById("btns");
 export const productDivs = document.getElementById("products");
 export const canvas = document.querySelector(".offcanvas-body");
 const searchInput = document.getElementById("searchInput");
-const categoryTitle = document.getElementById("category");
+// const categoryTitle = document.getElementById("category");
 const modalBody = document.querySelector(".modal-body");
 const modalTitle = document.querySelector(".modal-title");
 const body = document.querySelector("body");
 const basketCount = document.querySelector("#sepet");
-const clearBasket = document.getElementById("clear-basket");
+
 
 let data = [];
 let filtered = [];
@@ -41,10 +41,14 @@ document.addEventListener("DOMContentLoaded", urunGetir);
 btnDivs.addEventListener("click", (e) => {
   
   if (e.target.classList.contains("btn")) {
+    btnDivs.querySelectorAll(".btn-danger").forEach((item) => {
+      item.classList.remove("btn-danger");
+    });
+    e.target.classList.add("btn-danger");
     searchInput.value = "";
-  searchInput.focus();
+    searchInput.focus();
     const category = e.target.textContent;
-  categoryTitle.textContent = category;
+  // categoryTitle.textContent = category;
   filtered = (category === "ALL") ? data : data.filter(item => item.category === category);
   urunBas(filtered);
   }

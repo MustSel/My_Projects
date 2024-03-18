@@ -11,25 +11,17 @@ export const getCategories = (item) => {
    },["ALL"])
    
 
-let i=0
-const btnColors = [
-    "primary",
-    "secondary",
-    "success",
-    "info",
-    "warning",
-    "danger",
-    "light",
-    "dark",
-  ];
 categories.forEach(element => {
     
     btnDivs.innerHTML += `
-    <button class='btn btn-${btnColors[i]}'>${element}</button>
+    <div>
+    <button class='btn btn-secondary'>${element}</button>
+    </div>
     `
-    ++i
+    
 });
 
 
 
 };
+

@@ -16,20 +16,7 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-    <style>
-      .line-clamp-2 {
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
-      .line-clamp-1 {
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
-    </style>
+    <link rel="stylesheet" href="style.css">
     <title>BURADANAL</title>
     <link rel="shortcut icon" href="./assets/buradanal-favicon-black.png" type="image/x-icon">
   </head>
@@ -40,12 +27,25 @@
           <img
             src="./assets/buradanal-high-resolution-logo.png"
             alt="Logo"
-            width="120"
-            height="80"
+            width="140"
+            height="90"
             class="d-inline-block align-text-top"
           />
           
         </a>
+        <section
+        class="d-flex flex-row justify-content-center flex-wrap gap-3"
+        >
+        <div id="btns" class="d-flex flex-row justify-content-center gap-3"></div>
+        <div class="col-12 col-sm-6">
+          <input
+            type="search"
+            class="form-control"
+            id="searchInput"
+            placeholder="Search..."
+          />
+        </div>
+    </section>
         <button
           type="button"
           data-bs-toggle="offcanvas"
@@ -131,10 +131,7 @@
       <!--* ----------------------------------------------------------------------- -->
       <!--*                                 buttons                                 -->
       <!--* ----------------------------------------------------------------------- -->
-      <section
-        class="d-flex justify-content-center flex-wrap gap-3"
-        id="btns"
-      ></section>
+      
       <!--? ----------------------------------------------------------------------- -->
       <!--?                              search input                               -->
       <!--? ----------------------------------------------------------------------- -->
@@ -142,21 +139,14 @@
         class="d-flex justify-content-center flex-wrap gap-3 mt-4"
         id="searchs"
       >
-        <div class="col-12 col-sm-6">
-          <input
-            type="search"
-            class="form-control"
-            id="searchInput"
-            placeholder="Search..."
-          />
-        </div>
+        
       </section>
       <!--! ----------------------------------------------------------------------- -->
       <!--!                             category title                              -->
       <!--! ----------------------------------------------------------------------- -->
-      <h4 class="text-center mt-2">
+      <!-- <h4 class="text-center mt-2">
         Category: <span class="text-danger" id="category">ALL</span>
-      </h4>
+      </h4> -->
       <!--+ ----------------------------------------------------------------------- -->
       <!--+                                products                                 -->
       <!--+ ----------------------------------------------------------------------- -->
