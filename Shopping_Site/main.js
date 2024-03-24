@@ -87,7 +87,6 @@ if(prodId=="clear-basket"){
   
 }
   
-  //! clarus logosunu değiştir.
 
   if (e.target.classList.contains("see-details")) {
     const { title, description, price, image, id } = product;
@@ -152,3 +151,4 @@ const addedBasketPopup = () => {
     title: "Sepete Eklendi",
   });
 };
+
