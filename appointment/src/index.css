@@ -1,0 +1,26 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.borderWidth{
+  border-width: 15px !important;
+}
+
+.consulted{
+  width: 30% !important;
+  height: 40px !important;
+  opacity: 0.9;
+
+  font-size: 2rem;
+}
+.doctorCard{
+  transition: all 0.4s;
+}
+.doctorCard:hover{
+  scale: 1.1;
+}
+.doctorName{
+  font-size:large;
+}
